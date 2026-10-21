@@ -82,8 +82,15 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   </style>
+<style>
+.gnav{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;background:#0f172a;margin:-1.25rem -1.25rem 1.25rem;padding:.5rem .75rem;min-height:48px;box-sizing:border-box}
+.gnav a{background:transparent;border:1.5px solid #3b82f6;color:#f1f5f9;padding:.35rem .9rem;border-radius:20px;font-weight:700;font-size:.8rem;text-decoration:none;font-family:system-ui,-apple-system,sans-serif;line-height:1.5}
+.gnav a:hover{background:#1e3a8a}
+.gnav a.on{background:#3b82f6;color:#fff}
+</style>
 </head>
 <body>
+<nav class="gnav"><a href="mapa-sistemico.html">Mapa sistémico</a><a href="analisis-estructural.html">Análisis estructural</a><a href="arbol-de-pertinencia.html" class="on">Árbol de pertinencia</a><a href="escenarios-2035.html">Escenarios 2035</a></nav>
 
   <div class="header-bar">
     <div class="header-info">

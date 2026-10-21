@@ -2,40 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="0; url=mapa-sistemico.html">
 <title>Prospectiva Audio Personal 2035</title>
-<style>
-html,body{margin:0;padding:0;height:100%;background:#0f172a;font-family:system-ui,-apple-system,sans-serif}
-.nav{display:flex;gap:.4rem;flex-wrap:wrap;padding:.5rem .75rem;background:#0f172a;min-height:48px;box-sizing:border-box;align-items:center}
-.tab{background:transparent;border:1.5px solid #3b82f6;color:#f1f5f9;padding:.35rem .9rem;border-radius:20px;font-weight:700;font-size:.8rem;text-decoration:none}
-.tab:hover{background:#1e3a8a}
-.tab.on{background:#3b82f6;color:#fff}
-iframe{display:block;width:100%;height:calc(100% - 48px);border:0;background:#fff}
-</style>
+<script>location.replace("mapa-sistemico.html");</script>
 </head>
-<body>
-<div class="nav" id="nav"></div>
-<iframe id="fr" title="Contenido"></iframe>
-<script>
-var P=[
- ["mapa","Mapa sistémico","mapa-sistemico.html"],
- ["estructural","Análisis estructural","analisis-estructural.html"],
- ["arbol","Árbol de pertinencia","arbol-de-pertinencia.html"],
- ["escenarios","Escenarios 2035","escenarios-2035.html"]
-];
-var nav=document.getElementById("nav"),fr=document.getElementById("fr");
-function show(k){
-  var p=P.filter(function(x){return x[0]==k})[0]||P[0];
-  fr.src=p[2];
-  nav.querySelectorAll("a").forEach(function(a){a.classList.toggle("on",a.dataset.k==p[0])});
-  document.title=p[1]+" - Prospectiva Audio Personal 2035";
-}
-P.forEach(function(p){
-  var a=document.createElement("a");a.className="tab";a.textContent=p[1];a.href="#"+p[0];a.dataset.k=p[0];
-  nav.appendChild(a);
-});
-window.addEventListener("hashchange",function(){show(location.hash.slice(1))});
-show(location.hash.slice(1));
-</script>
-</body>
+<body><a href="mapa-sistemico.html">Ir al Mapa sistémico</a></body>
 </html>
