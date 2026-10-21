@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análisis Estructural (MICMAC) - Audio Personal 2035</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #cbd5e1;
+      --canvas-bg: #f1f5f9;
+      --accent: #2563eb;
+      --accent-glow: rgba(37, 99, 235, 0.2);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-title: #1e293b;
+      
+      --purple-flow: #9333ea;
+      --green-flow: #16a34a;
+      --blue-flow: #2563eb;
+      --amber-flow: #d97706;
+      --red-flow: #dc2626;
+      --overlay-bg: rgba(15, 23, 42, 0.75);
+    }
+
+    body.dark-theme {
+      --bg: #0b0f19;
+      --card-bg: #151d2a;
+      --card-border: #2a364f;
+      --canvas-bg: #111827;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-title: #ffffff;
+
+      --purple-flow: #8b5cf6;
+      --green-flow: #10b981;
+      --blue-flow: #3b82f6;
+      --amber-flow: #f59e0b;
+      --red-flow: #ef4444;
+      --overlay-bg: rgba(11, 15, 25, 0.85);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text); padding: 1.25rem; line-height: 1.5; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+
+    /* CABECERA */
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; background: var(--card-bg); border: 1px solid var(--card-border); padding: 1rem 1.25rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .header-info h1 { font-size: 1.35rem; color: var(--text-title); font-weight: 800; margin-bottom: 0.25rem; }
+    .header-info p { color: var(--text-muted); font-size: 0.85rem; }
+
+    .theme-toggle-btn { background: var(--card-bg); border: 1.5px solid var(--accent); color: var(--text); padding: 0.45rem 0.95rem; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+    .theme-toggle-btn:hover { background: var(--accent); color: #ffffff; }
+
+    /* CONTENEDOR DEL LIENZO ESTRUCTURAL */
+    .struct-container { position: relative; width: 100%; max-width: 1200px; height: 680px; margin: 0 auto; background: var(--canvas-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+    
+    .struct-zone { position: absolute; border: 2px dashed; padding: 10px; border-radius: 18px; z-index: 1; }
+    .struct-zone-title { position: absolute; top: 10px; left: 16px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .sz-ext { left: 20px; top: 20px; width: 360px; height: 635px; border-color: var(--purple-flow); background: rgba(147, 51, 234, 0.05); }
+    .sz-ext .struct-zone-title { color: var(--purple-flow); }
+
+    .sz-int { left: 420px; top: 20px; width: 360px; height: 635px; border-color: var(--blue-flow); background: rgba(37, 99, 235, 0.05); }
+    .sz-int .struct-zone-title { color: var(--blue-flow); }
+
+    .sz-res { left: 820px; top: 20px; width: 360px; height: 635px; border-color: var(--green-flow); background: rgba(22, 163, 74, 0.05); }
+    .sz-res .struct-zone-title { color: var(--green-flow); }
+
+    .struct-node { position: absolute; z-index: 10; width: 320px; background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 12px; padding: 0.9rem 1rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+    .struct-node:hover { transform: translateY(-3px) scale(1.015); border-color: var(--accent); box-shadow: 0 8px 20px var(--accent-glow); }
+    
+    .micmac-tag { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block; margin-bottom: 0.4rem; color: #fff; }
+    .struct-node-title { font-size: 0.92rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.3rem; line-height: 1.3; }
+    .struct-node-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* LEYENDA */
+    .sys-legend { display: flex; justify-content: space-around; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.75rem 1.25rem; margin-top: 1rem; max-width: 1200px; margin-left: auto; margin-right: auto; flex-wrap: wrap; gap: 0.6rem; font-size: 0.8rem; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--text); }
+    .leg-line { width: 30px; height: 3px; display: inline-block; border-radius: 2px; }
+
+    /* MODAL DE DETALLES */
+    .modal-overlay { position: fixed; inset: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 100; padding: 1rem; }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+    .modal-card { background: var(--card-bg); border: 1.5px solid var(--accent); border-radius: 14px; width: 100%; max-width: 720px; max-height: 88vh; overflow-y: auto; padding: 1.75rem; box-shadow: 0 15px 40px rgba(0,0,0,0.22); }
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.85rem; }
+    .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--text-title); margin-top: 0.25rem; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer; }
+
+    .modal-body-section { margin-bottom: 1.1rem; font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+    .modal-body-section h4 { color: var(--accent); font-size: 0.82rem; text-transform: uppercase; margin-bottom: 0.35rem; font-weight: 800; }
+    .metrics-box { background: rgba(37, 99, 235, 0.08); border-left: 3.5px solid var(--accent); padding: 0.85rem; border-radius: 0 6px 6px 0; margin: 0.85rem 0; font-size: 0.85rem; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- CABECERA DE LA VISTA -->
+  <div class="header-bar">
+    <div class="header-info">
+      <h1>Análisis Estructural de Variables (MICMAC)</h1>
+      <p>Matriz de Influencia y Dependencia: Entorno Externo ➔ Sistema Interno ➔ Variables Resultado</p>
+    </div>
+    <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()">Modo Oscuro</button>
+  </div>
+
+  <!-- LIENZO ESTRUCTURAL CON ZONAS Y LÍNEAS CONECTORES -->
+  <div class="struct-container">
+    
+    <!-- SVG CON LÍNEAS Y ARCOS DE CONEXIÓN DEBIDAMENTE CALIBRADOS -->
+    <svg style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;">
+      <!-- LEYENDA DE CONEXIONES SVG -->
+      <!-- 1. Influencia Directa (Azul Continuo) -->
+      <path d="M 360,115 L 440,115" stroke="var(--blue-flow)" stroke-width="3" fill="none" />
+      <path d="M 360,305 L 440,305" stroke="var(--blue-flow)" stroke-width="3" fill="none" />
+      <path d="M 760,305 L 840,305" stroke="var(--blue-flow)" stroke-width="3" fill="none" />
+      <path d="M 760,495 L 840,305" stroke="var(--blue-flow)" stroke-width="2.5" fill="none" />
+
+      <!-- 2. Influencia Indirecta / Regulatoria (Morado Punteado) -->
+      <!-- Conexiones Directas del Reglamento UE hacia Resultados -->
+      <path d="M 360,100 C 520,30 680,30 840,100" stroke="var(--purple-flow)" stroke-width="3.5" stroke-dasharray="6 4" fill="none" />
+      <path d="M 360,115 C 520,180 680,240 840,290" stroke="var(--purple-flow)" stroke-width="2.5" stroke-dasharray="6 4" fill="none" />
+      <path d="M 360,495 C 520,530 680,530 840,495" stroke="var(--purple-flow)" stroke-width="2.5" stroke-dasharray="6 4" fill="none" />
+
+      <!-- 3. Dependencia Crítica / Inestabilidad (Rojo Continuo) -->
+      <path d="M 760,115 L 840,115" stroke="var(--red-flow)" stroke-width="3.5" fill="none" />
+      <path d="M 760,115 C 800,115 800,290 840,290" stroke="var(--red-flow)" stroke-width="3.5" fill="none" />
+      <path d="M 760,305 C 800,305 800,495 840,495" stroke="var(--red-flow)" stroke-width="3" fill="none" />
+    </svg>
+
+    <!-- 1. COLUMNA 1: INCERTIDUMBRES / VARS. EXTERNAS (ENTORNO) -->
+    <div class="struct-zone sz-ext">
+      <span class="struct-zone-title">1. Incertidumbres / Vars. Externas (Entorno)</span>
+    </div>
+
+    <div class="struct-node" style="left: 40px; top: 60px;" onclick="openModal('v-ext1')">
+      <span class="micmac-tag" style="background:#9333ea;">Externa (Político-Legal)</span>
+      <div class="struct-node-title">Reglamento UE 2023/1542 y Leyes Locales</div>
+      <div class="struct-node-desc">Norma internacional de baterías cambiables e incertidumbre sobre su adopción en América Latina.</div>
+    </div>
+
+    <div class="struct-node" style="left: 40px; top: 250px;" onclick="openModal('v-ext2')">
+      <span class="micmac-tag" style="background:#9333ea;">Externa (Insumos Globales)</span>
+      <div class="struct-node-title">Cadena de Litio y Neodimio</div>
+      <div class="struct-node-desc">Volatilidad y escasez de tierras raras fuera del control del fabricante.</div>
+    </div>
+
+    <div class="struct-node" style="left: 40px; top: 440px;" onclick="openModal('v-ext3')">
+      <span class="micmac-tag" style="background:#9333ea;">Externa (Mercado)</span>
+      <div class="struct-node-title">Aceptación y Hábitos del Usuario</div>
+      <div class="struct-node-desc">Disposición del consumidor a preferir durabilidad antes que estética hiperpequeña.</div>
+    </div>
+
+    <!-- 2. COLUMNA 2: VARIABLES INTERNAS (SISTEMA / HARDWARE) -->
+    <div class="struct-zone sz-int">
+      <span class="struct-zone-title">2. Variables Internas (Sistema / Hardware)</span>
+    </div>
+
+    <div class="struct-node" style="left: 440px; top: 60px;" onclick="openModal('v-int1')">
+      <span class="micmac-tag" style="background:#2563eb;">Interna (Ensamble)</span>
+      <div class="struct-node-title">Sustitución de Pegamento por Tornillos</div>
+      <div class="struct-node-desc">Punto de apalancamiento: cambiar resinas por tornillería Torx/Phillips en fábrica.</div>
+    </div>
+
+    <div class="struct-node" style="left: 440px; top: 250px;" onclick="openModal('v-int2')">
+      <span class="micmac-tag" style="background:#2563eb;">Interna (Arquitectura)</span>
+      <div class="struct-node-title">Modularidad de Celda e Empaques IP54</div>
+      <div class="struct-node-desc">Diseño de compartimentos accesibles y juntas de silicona impermeables.</div>
+    </div>
+
+    <div class="struct-node" style="left: 440px; top: 440px;" onclick="openModal('v-int3')">
+      <span class="micmac-tag" style="background:#2563eb;">Interna (Firmware)</span>
+      <div class="struct-node-title">Gestión Térmica BMS sin Bloqueos</div>
+      <div class="struct-node-desc">Software configurado a 1.500 ciclos sin cifrado propietario (parts-pairing).</div>
+    </div>
+
+    <!-- 3. COLUMNA 3: VARIABLES RESULTADO (DESEMPEÑO) -->
+    <div class="struct-zone sz-res">
+      <span class="struct-zone-title">3. Variables Resultado (Desempeño)</span>
+    </div>
+
+    <div class="struct-node" style="left: 840px; top: 60px;" onclick="openModal('v-res1')">
+      <span class="micmac-tag" style="background:#16a34a;">Resultado (Ambiental)</span>
+      <div class="struct-node-title">Reducción Masiva de Residuos RAEE</div>
+      <div class="struct-node-desc">Impacto directo en la meta global de contención de basura electrónica.</div>
+    </div>
+
+    <div class="struct-node" style="left: 840px; top: 250px;" onclick="openModal('v-res2')">
+      <span class="micmac-tag" style="background:#16a34a;">Resultado (Vida Útil)</span>
+      <div class="struct-node-title">Extensión de Vida Útil (>5 Años)</div>
+      <div class="struct-node-desc">Eliminación de la obsolescencia forzada a los 26 meses.</div>
+    </div>
+
+    <div class="struct-node" style="left: 840px; top: 440px;" onclick="openModal('v-res3')">
+      <span class="micmac-tag" style="background:#16a34a;">Resultado (Económico)</span>
+      <div class="struct-node-title">Ahorro del Usuario y Modelo Repuestos</div>
+      <div class="struct-node-desc">Evolución hacia un negocio rentable basado en repuestos de $10 USD.</div>
+    </div>
+
+  </div>
+
+  <!-- LEYENDA INFERIOR DE CONEXIONES -->
+  <div class="sys-legend">
+    <div class="legend-item"><span class="leg-line" style="background:var(--blue-flow);"></span> Influencia Directa</div>
+    <div class="legend-item"><span class="leg-line" style="background:var(--purple-flow); border-top:2px dashed var(--purple-flow);"></span> Influencia Indirecta / Regulatoria</div>
+    <div class="legend-item"><span class="leg-line" style="background:var(--red-flow);"></span> Dependencia Crítica (Inestabilidad)</div>
+  </div>
+
+  <!-- MODAL DE DETALLES -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; padding:0.22rem 0.55rem; background:var(--accent); color:#fff; border-radius:4px;" id="m-tag">CATEGORÍA</span>
+          <h2 class="modal-title" id="m-title">Nombre de la Variable</h2>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="modal-body-section">
+        <h4>Análisis Estructural y Prospectivo</h4>
+        <p id="m-desc">Detalle...</p>
+      </div>
+
+      <div class="metrics-box">
+        <strong>Indicadores y Métricas Clave:</strong>
+        <p id="m-metrics" style="margin-top:0.25rem;">Métricas...</p>
+      </div>
+
+      <div class="modal-body-section">
+        <h4>Rol en la Matriz MICMAC</h4>
+        <p id="m-impact">Impacto...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dataModal = {
+      'v-ext1': {
+        tag: 'Externa (Político-Legal)',
+        title: 'Reglamento UE 2023/1542 y Leyes Locales',
+        desc: 'Norma internacional de baterías extraíbles que actúa como variable motor exógena. Presiona la eliminación de pegamento e impone directamente las metas ambientales de RAEE y vida útil prolongada.',
+        metrics: 'Obligatoriedad legal en la UE a partir de febrero de 2027.',
+        impact: 'Conecta directamente con el hardware interno y con las Variables Resultado del sistema.'
+      },
+      'v-ext2': {
+        tag: 'Externa (Insumos Globales)',
+        title: 'Cadena de Litio y Neodimio',
+        desc: 'Volatilidad y escasez de tierras raras fuera del control del fabricante que fuerzan la adopción de arquitecturas modulares.',
+        metrics: 'Variación de precios de materias primas críticas.',
+        impact: 'Impulsa la necesidad de recuperar celdas y partes en la economía circular.'
+      },
+      'v-ext3': {
+        tag: 'Externa (Mercado)',
+        title: 'Aceptación y Hábitos del Usuario',
+        desc: 'Disposición del consumidor a preferir la durabilidad y la reparabilidad por sobre la estética ultracompacta.',
+        metrics: '74% de renovación motivada por fallo insalvable de batería.',
+        impact: 'Valida la demanda del modelo de repuestos de $10 USD.'
+      },
+      'v-int1': {
+        tag: 'Interna (Ensamble)',
+        title: 'Sustitución de Pegamento por Tornillos',
+        desc: 'Punto de apalancamiento principal del sistema: cambiar resinas epóxicas por tornillería Torx/Phillips en fábrica para permitir el desensamble no destructivo.',
+        metrics: 'Sustitución de celda en menos de 2 minutos.',
+        impact: 'Desencadena la dependencia crítica hacia la extensión de la vida útil.'
+      },
+      'v-int2': {
+        tag: 'Interna (Arquitectura)',
+        title: 'Modularidad de Celda e Empaques IP54',
+        desc: 'Diseño de compartimentos accesibles y juntas de silicona impermeables que mantienen la protección contra agua sin sellar con calor.',
+        metrics: 'Puntuación iFixit ≥ 8/10.',
+        impact: 'Garantiza la durabilidad física del producto.'
+      },
+      'v-int3': {
+        tag: 'Interna (Firmware)',
+        title: 'Gestión Térmica BMS sin Bloqueos',
+        desc: 'Software de gestión de batería configurado a 1.500 ciclos de carga y libre de cifrado propietario (parts-pairing).',
+        metrics: 'Conservación del 80% de la capacidad tras 4 años de uso.',
+        impact: 'Evita la obsolescencia programada por software.'
+      },
+      'v-res1': {
+        tag: 'Resultado (Ambiental)',
+        title: 'Reducción Masiva de Residuos RAEE',
+        desc: 'Impacto directo en la meta global de contención de basura electrónica de audio personal.',
+        metrics: 'Reducción proyectada de más del 60% en la tasa de desecho.',
+        impact: 'Métrica de éxito ambiental regulado.'
+      },
+      'v-res2': {
+        tag: 'Resultado (Vida Útil)',
+        title: 'Extensión de Vida Útil (>5 Años)',
+        desc: 'Eliminación de la obsolescencia forzada a los 26 meses mediante la sustitución periódica de microbaterías.',
+        metrics: 'Ciclo de vida ampliado a más de 60 meses.',
+        impact: 'Meta central del ecodiseño sostenible.'
+      },
+      'v-res3': {
+        tag: 'Resultado (Económico)',
+        title: 'Ahorro del Usuario y Modelo Repuestos',
+        desc: 'Evolución hacia un negocio rentable basado en repuestos de $10 USD en lugar de recompras completas de $200 USD.',
+        metrics: 'Repuesto a <10% del precio de un equipo nuevo.',
+        impact: 'Ahorro sustancial en el costo total de propiedad para el consumidor.'
+      }
+    };
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+      const isDark = document.body.classList.contains('dark-theme');
+      document.getElementById('themeBtn').innerText = isDark ? 'Modo Claro' : 'Modo Oscuro';
+    }
+
+    function openModal(key) {
+      const info = dataModal[key];
+      if (!info) return;
+
+      document.getElementById('m-tag').innerText = info.tag;
+      document.getElementById('m-title').innerText = info.title;
+      document.getElementById('m-desc').innerText = info.desc;
+      document.getElementById('m-metrics').innerText = info.metrics;
+      document.getElementById('m-impact').innerText = info.impact;
+
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

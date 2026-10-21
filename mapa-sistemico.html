@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Sistémico: El Usuario en el Centro - Audio Personal 2035</title>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--bd:#cbd5e1;--cv:#f1f5f9;--ac:#2563eb;--glow:rgba(37,99,235,.2);--tx:#0f172a;--mu:#475569;--ti:#1e293b;--red:#dc2626;--blue:#2563eb;--green:#16a34a;--purple:#9333ea;--amber:#d97706;--teal:#0d9488;--ov:rgba(15,23,42,.75)}
+body.dark{--bg:#0b0f19;--card:#151d2a;--bd:#2a364f;--cv:#111827;--ac:#3b82f6;--glow:rgba(59,130,246,.35);--tx:#f1f5f9;--mu:#94a3b8;--ti:#fff;--red:#ef4444;--blue:#3b82f6;--green:#10b981;--purple:#8b5cf6;--amber:#f59e0b;--teal:#14b8a6;--ov:rgba(11,15,25,.85)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--tx);padding:1.25rem;line-height:1.5;transition:background .3s}
+.top{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:0 auto 1rem;max-width:1200px;background:var(--card);border:1px solid var(--bd);padding:1rem 1.25rem;border-radius:12px}
+.top h1{font-size:1.35rem;color:var(--ti);font-weight:800}
+.top p{font-size:.85rem;color:var(--mu)}
+.top b{font-size:.8rem;color:var(--ac)}
+.btn{background:var(--card);border:1.5px solid var(--ac);color:var(--tx);padding:.45rem .95rem;border-radius:20px;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--ac);color:#fff}
+.bar{display:flex;justify-content:center;align-items:center;gap:.6rem;flex-wrap:wrap;margin:0 auto .85rem;max-width:1200px;background:var(--card);border:1px solid var(--bd);padding:.6rem 1.2rem;border-radius:10px}
+.bar span{font-weight:800;font-size:.78rem;color:var(--mu);text-transform:uppercase}
+.fb{border:1px solid var(--bd);background:var(--bg);border-radius:18px;padding:.35rem .85rem;font-size:.75rem;font-weight:700;color:var(--tx);cursor:pointer}
+.fb.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.fb.on[data-f=info]{background:var(--red);border-color:var(--red)}
+.fb.on[data-f=money]{background:var(--blue);border-color:var(--blue)}
+.fb.on[data-f=mat]{background:var(--green);border-color:var(--green)}
+.wrap{max-width:1200px;margin:0 auto;overflow-x:auto}
+#cv{position:relative;width:1200px;height:810px;background:var(--cv);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.e{fill:none;stroke-width:2.6;opacity:.85;transition:opacity .25s;pointer-events:stroke;cursor:pointer}
+.e:hover{stroke-width:4.5;opacity:1}
+.e.info{stroke:var(--red);stroke-dasharray:6 4}.e.money{stroke:var(--blue)}.e.mat{stroke:var(--green)}
+#tip{position:absolute;z-index:100;display:none;background:rgba(15,23,42,.95);color:#fff;padding:.5rem .8rem;border-radius:8px;font-size:.78rem;font-weight:600;max-width:300px;pointer-events:none;border:1px solid var(--ac)}
+.zone{position:absolute;z-index:1;border:2.5px dashed var(--zc);background:color-mix(in srgb,var(--zc) 10%,transparent);border-radius:26px 18px 30px 20px}
+.zone span{position:absolute;top:8px;left:16px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--zc)}
+.nd{position:absolute;z-index:10;display:flex;flex-direction:column;justify-content:center;text-align:center;background:var(--card);border:1.5px solid var(--bd);border-radius:8px;padding:.35rem .6rem;font-size:.75rem;font-weight:700;color:var(--ti);cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.05);transition:all .2s}
+.nd:hover{transform:translateY(-2px) scale(1.02);border-color:var(--ac);box-shadow:0 5px 14px var(--glow)}
+.nd small{font-size:.67rem;font-weight:500;color:var(--mu)}
+.nd.t{border:2px solid var(--red);background:color-mix(in srgb,var(--red) 10%,var(--card))}
+.nd.c{border:2px solid var(--green);background:color-mix(in srgb,var(--green) 12%,var(--card))}
+.nd.web::after{content:"WEB";position:absolute;top:-7px;right:6px;background:var(--ac);color:#fff;font-size:.55rem;font-weight:800;padding:1px 5px;border-radius:6px}
+#hub{position:absolute;z-index:10;left:430px;top:330px;width:340px;height:150px;border-radius:22px;background:linear-gradient(135deg,#1d4ed8,#1e1b4b);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem;border:3px solid #60a5fa;box-shadow:0 0 24px var(--glow);cursor:pointer;transition:transform .2s}
+#hub:hover{transform:scale(1.03)}
+#hub strong{font-size:1.1rem;text-transform:uppercase;letter-spacing:.4px}
+#hub small{font-size:.76rem;margin-top:.4rem;color:#cbd5e1}
+.leg{display:flex;justify-content:space-around;flex-wrap:wrap;gap:.5rem;max-width:1200px;margin:.85rem auto 0;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:.6rem 1.2rem;font-size:.78rem;font-weight:600}
+.leg i{display:inline-block;width:26px;height:0;border-top:3px solid;vertical-align:middle;margin-right:.35rem}
+.leg u{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:middle;margin-right:.35rem;border:2px solid}
+.ov{position:fixed;inset:0;background:var(--ov);backdrop-filter:blur(5px);display:none;justify-content:center;align-items:center;z-index:200;padding:1rem}
+.ov.on{display:flex}
+.md{background:var(--card);border:1.5px solid var(--ac);border-radius:14px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;padding:1.5rem}
+.md .tg{font-size:.68rem;font-weight:800;text-transform:uppercase;padding:.18rem .5rem;border-radius:4px;color:#fff;display:inline-block}
+.md h2{font-size:1.2rem;color:var(--ti);margin:.4rem 0 .8rem;padding-right:2rem}
+.md h4{color:var(--ac);font-size:.8rem;text-transform:uppercase;margin:.9rem 0 .3rem}
+.md p{font-size:.9rem}
+.x{float:right;background:none;border:none;color:var(--mu);font-size:1.6rem;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <h1>Mapa Sistémico: El Usuario en el Centro</h1>
+    <p>Mercado de Audio Personal 2035: obsolescencia de baterías, canales de venta, reparación y regulación (TWS, Over-Ear y parlantes)</p>
+    <b>Integrantes: Luisa Restrepo, Samara Soto</b>
+  </div>
+  <button class="btn" id="th">Modo Oscuro</button>
+</div>
+<div class="bar">
+  <span>Filtrar conexiones:</span>
+  <button class="fb on" data-f="all">Ver todo</button>
+  <button class="fb" data-f="info">Influencia y regulación</button>
+  <button class="fb" data-f="money">Dinero y ventas</button>
+  <button class="fb" data-f="mat">Productos y residuos</button>
+</div>
+<div class="wrap"><div id="cv"><div id="tip"></div><svg id="sv"></svg>
+  <div id="hub"><strong>El Usuario / Consumidor</strong><small>Decide: comprar, usar, reparar o desechar<br>(clic para ver el detalle)</small></div>
+</div></div>
+<div class="leg">
+  <span><i style="border-color:var(--red);border-top-style:dashed"></i>Influencia, publicidad y leyes</span>
+  <span><i style="border-color:var(--blue)"></i>Dinero y ventas</span>
+  <span><i style="border-color:var(--green)"></i>Productos y residuos (RAEE)</span>
+  <span><u style="border-color:var(--red)"></u>Choque (tensión)</span>
+  <span><u style="border-color:var(--green)"></u>Punto de apalancamiento</span>
+  <span><u style="border-color:var(--ac)"></u>Con página web (WEB)</span>
+</div>
+<div class="ov" id="ov"><div class="md" id="md"></div></div>
+
+<script>
+// Zonas (amebas): id, x, y, ancho, alto, columnas, color, título, nodos
+// Nodo: [id, título, subtítulo, tipo (a=actor, t=choque, c=apalancamiento), detalle, páginas web]
+var Z=[
+{x:15,y:15,w:570,h:250,k:2,c:"--purple",t:"Ameba 1: Fabricantes globales",n:[
+["fg","Samsung, Apple y Sony","Diseño sellado con epoxi","a","Multinacionales que controlan patentes y arquitecturas pegadas (unibody). Usan resinas epóxicas, poliuretano o soldadura ultrasónica con la excusa de la protección IPX4-IPX7. Abrir el producto desgarra el circuito flexible o destruye la carcasa."],
+["fm","Fairphone y AIAIAI","Modulares, tornillos y sello IP54","a","Marcas pioneras del ecodiseño: tornillería accesible, baterías cambiables en unos 2 minutos y repuestos a menos del 10% del precio del equipo."],
+["fw","Webs oficiales de las marcas","Lanzamientos, garantías, repuestos","a","Primer punto de contacto del usuario con la marca: anuncian productos, gestionan garantías y venden repuestos.","apple.com · sony.com · samsung.com · fairphone.com · aiaiai.audio"],
+["lev","Punto de apalancamiento","Cambiar pegamento por tornillos","c","Sustituir resinas adhesivas por tornillería de precisión (Torx/Phillips) y juntas de silicona desde la línea de ensamblaje. Reduce el cambio de batería a USD 10, conserva el sello IP54 y evita incendios en plantas de reciclaje."],
+["t3","Choque 3: Globales vs. Colombia","Parts-pairing y esquemáticos cerrados","t","Las multinacionales imponen cifrado de piezas y bloquean esquemáticos, impidiendo que la industria y los técnicos colombianos vendan repuestos o presten servicio."]]},
+{x:615,y:15,w:570,h:250,k:2,c:"--red",t:"Ameba 6: Regulación, evaluación y reciclaje",n:[
+["ue","Reglamento UE 2023/1542","Art. 11: baterías extraíbles 2027","a","Desde el 18/02/2027 las baterías portátiles deben poder extraerse y reemplazarse con herramientas comunes. Exige repuestos por 5 años y prohíbe el bloqueo por software.","eur-lex.europa.eu"],
+["co","Normativa colombiana RAEE","Ley 1672/2013, Decretos 1076 y 284","a","Marco de gestión integral de residuos eléctricos y electrónicos en Colombia.","minambiente.gov.co"],
+["anla","ANLA","Autoridad de licencias ambientales","a","Supervisa el cumplimiento ambiental. Incertidumbre clave: qué tan rápido adoptará criterios de reparabilidad similares a los europeos.","anla.gov.co"],
+["ifx","iFixit","Puntaje de reparabilidad 0-10","a","Evaluador independiente de la mantenibilidad de los productos. Un puntaje de 8/10 o más es el criterio de ingeniería del proyecto.","ifixit.com"],
+["rf","Plantas de reciclaje formal","Solo el 22,3% de los RAEE","a","Recolección y procesamiento documentado. El 77,7% restante termina en vertederos, quemado o en la informalidad. Residuos globales: 62 millones de t en 2022 y 82 millones proyectadas para 2030."],
+["t5","Choque 5: Norma vs. informalidad","Reciclaje legal vs. recolectores","t","Las normas exigen reciclaje formal, pero más del 77% de la recolección en economías emergentes la ejecutan recicladores de calle."]]},
+{x:15,y:280,w:330,h:250,k:1,c:"--amber",t:"Ameba 3: Publicidad y redes",n:[
+["tv","Comerciales de TV","Narrativa del recambio anual","a","Medios masivos que promueven cambiar de audífonos por moda y estatus."],
+["rs","Redes sociales e influencers","YouTube, Instagram, TikTok","a","Reseñas y campañas que aceleran el deseo de novedad.","youtube.com · instagram.com · tiktok.com"],
+["t2","Choque 2: Publicidad vs. usuario","Cambiar cada año vs. gastar menos","t","Comerciales que incitan a renovar por estética frente a la necesidad real del usuario de reducir gasto y tener productos duraderos."]]},
+{x:855,y:280,w:330,h:250,k:1,c:"--blue",t:"Ameba 2: Canales de venta",n:[
+["ec","Tiendas virtuales","Amazon, MercadoLibre, e-stores","a","Compras rápidas, catálogo internacional y descuentos.","amazon.com · mercadolibre.com.co · tiendas oficiales de las marcas"],
+["rt","Retail físico","Alkosto, Falabella, Ktronix","a","Pruebas ergonómicas presenciales y reclamos de garantía en tienda.","alkosto.com · falabella.com.co · ktronix.com"],
+["t1","Choque 1: Virtual vs. físico","Márgenes digitales vs. costos de local","t","Competencia por precios en plataformas digitales frente a los altos costos operativos y tributarios de los locales físicos."]]},
+{x:15,y:545,w:570,h:250,k:2,c:"--green",t:"Ameba 4: Reparación local y oficial",n:[
+["so","Servicio técnico oficial","USD 180-200 por reparar","a","Declara el producto inservible o cobra entre el 80% y el 90% del costo de uno nuevo, forzando la recompra."],
+["tb","Técnicos de barrio","Reparan por USD 10-15","a","Talleristas de pasajes comerciales que abren carcasas con calor o solvente y adaptan celdas genéricas. Meta del proyecto: sustitución no destructiva en menos de 15 minutos."],
+["wr","Tutoriales y repuestos en línea","iFixit, YouTube, MercadoLibre","a","Guías de reparación y venta de baterías genéricas que apoyan al usuario y al técnico.","ifixit.com · youtube.com · mercadolibre.com.co"],
+["t4","Choque 4: Oficial vs. técnico","90% del precio nuevo vs. USD 10","t","Cobros oficiales equivalentes al 90% de un equipo nuevo frente a reparaciones adaptadas por USD 10 en talleres independientes."]]},
+{x:615,y:545,w:570,h:250,k:2,c:"--teal",t:"Ameba 5: Industria y mercado colombiano",n:[
+["ml","Marcas locales","Janus, Kalley, Challenger","a","Marcas e importadores colombianos que podrían adoptar diseños modulares o buscar exenciones por miniaturización."],
+["sa","San Andresito y pasajes","Tecnología, repuestos y usados","a","Pasajes comerciales de tecnología donde circulan equipos importados, repuestos genéricos y aparatos de segunda mano."],
+["ri","Red informal de recolección","Recicladores de calle","a","Extraen litio y cobre al peso y reciclan buena parte del e-waste. Son la mayoría de la recolección en economías emergentes."]]}
+];
+var HUB={x:430,y:330,w:340,h:150},R={hub:HUB},D={hub:{t:"El Usuario / Consumidor",k:"h",d:"Centro del sistema. Toma las decisiones cotidianas de compra, tiempo de uso, intento de reparación o desecho. Recibe los estímulos de la publicidad y las barreras económicas de las garantías. La vida útil promedio es de 26 meses y en el 29% a 74% de los casos el reemplazo se debe a la batería. Gasto acumulado: USD 300-450 en recompras cada 2 años."}};
+var cv=document.getElementById("cv"),sv=document.getElementById("sv"),tip=document.getElementById("tip");
+Z.forEach(function(z){
+  var d=document.createElement("div");d.className="zone";
+  d.style.cssText="left:"+z.x+"px;top:"+z.y+"px;width:"+z.w+"px;height:"+z.h+"px;--zc:var("+z.c+")";
+  d.innerHTML="<span>"+z.t+"</span>";cv.appendChild(d);
+  var g=12,p=15,nw=(z.w-2*p-(z.k-1)*g)/z.k;
+  z.n.forEach(function(n,i){
+    var x=z.x+p+(i%z.k)*(nw+g),y=z.y+40+Math.floor(i/z.k)*70;
+    R[n[0]]={x:x,y:y,w:nw,h:62};D[n[0]]={t:n[1],k:n[3],d:n[4],w:n[5]||"",z:z.t};
+    var e=document.createElement("div");e.className="nd "+(n[3]=="a"?"":n[3])+(n[5]?" web":"");
+    e.style.cssText="left:"+x+"px;top:"+y+"px;width:"+nw+"px;height:62px";
+    e.innerHTML=n[1]+"<small>"+n[2]+"</small>";
+    e.onclick=function(){openM(n[0])};cv.appendChild(e);
+  });
+});
+// Conexiones: tipo, origen, destino, explicación
+var E=[
+["info","tv","hub","Los comerciales imponen el recambio anual por moda y estatus."],
+["info","rs","hub","Influencers y redes refuerzan la narrativa de novedad."],
+["info","ue","fg","Art. 11: baterías reemplazables y repuestos por 5 años."],
+["info","ue","hub","Protege el derecho del usuario a reparar y prohíbe el bloqueo por software."],
+["info","ifx","hub","Los puntajes de reparabilidad informan la decisión de compra."],
+["info","co","ri","Las normas de RAEE exigen reciclaje formal, pero lo informal domina."],
+["money","hub","ec","Compras rápidas, catálogo internacional y descuentos."],
+["money","hub","rt","Prueba presencial y reclamos de garantía en tienda."],
+["money","hub","so","Reparación oficial: USD 180-200 (80-90% del equipo nuevo)."],
+["money","hub","tb","Reparación informal con celda genérica: USD 10-15."],
+["money","hub","wr","Compra de baterías genéricas y consulta de tutoriales."],
+["money","ec","fg","Las ventas en línea generan ingresos a los fabricantes."],
+["mat","fg","ec","Audífonos sellados con epoxi, vida útil de unos 26 meses."],
+["mat","fm","rt","Modelos modulares con tornillos Torx y sello IP54."],
+["mat","ec","hub","Entrega del producto al usuario."],
+["mat","rt","hub","Entrega del producto y garantía física."],
+["mat","hub","ri","Audífonos descartados que van al reciclaje informal (77,7%)."],
+["mat","hub","rf","Solo el 22,3% del e-waste llega al reciclaje formal."],
+["mat","ri","sa","Reventa de e-waste y de repuestos extraídos."],
+["mat","ml","rt","Marcas locales distribuidas en retail colombiano."]
+];
+function ctr(r){return[r.x+r.w/2,r.y+r.h/2]}
+function clip(r,tx,ty){var c=ctr(r),dx=tx-c[0],dy=ty-c[1],s=Math.min(r.w/2/Math.abs(dx||1e-9),r.h/2/Math.abs(dy||1e-9));return[c[0]+dx*s,c[1]+dy*s]}
+var NS="http://www.w3.org/2000/svg";
+E.forEach(function(e,i){
+  var a=R[e[1]],b=R[e[2]],ca=ctr(a),cb=ctr(b),p1=clip(a,cb[0],cb[1]),p2=clip(b,ca[0],ca[1]);
+  var mx=(p1[0]+p2[0])/2,my=(p1[1]+p2[1])/2,dx=p2[0]-p1[0],dy=p2[1]-p1[1],l=Math.sqrt(dx*dx+dy*dy)||1,o=22;
+  var path=document.createElementNS(NS,"path");
+  path.setAttribute("d","M"+p1[0]+","+p1[1]+" Q"+(mx-dy/l*o)+","+(my+dx/l*o)+" "+p2[0]+","+p2[1]);
+  path.setAttribute("class","e "+e[0]);path.dataset.f=e[0];path.dataset.i=e[3];
+  path.onmousemove=function(ev){var r=cv.getBoundingClientRect();tip.style.display="block";tip.style.left=(ev.clientX-r.left+14)+"px";tip.style.top=(ev.clientY-r.top+14)+"px";tip.textContent=e[3]};
+  path.onmouseleave=function(){tip.style.display="none"};
+  sv.appendChild(path);
+});
+document.querySelectorAll(".fb").forEach(function(b){b.onclick=function(){
+  document.querySelectorAll(".fb").forEach(function(x){x.classList.remove("on")});b.classList.add("on");
+  document.querySelectorAll(".e").forEach(function(p){p.style.opacity=(b.dataset.f=="all"||p.dataset.f==b.dataset.f)?"":".07"});
+}});
+var TG={h:["Centro del sistema","#2563eb"],a:["Actor","#9333ea"],t:["Choque / tensión","#dc2626"],c:["Punto de apalancamiento","#16a34a"]};
+function openM(id){
+  var d=D[id],t=TG[d.k];
+  document.getElementById("md").innerHTML='<button class="x" onclick="closeM()">&times;</button><span class="tg" style="background:'+t[1]+'">'+t[0]+'</span><h2>'+d.t+'</h2><h4>Descripción</h4><p>'+d.d+'</p>'+(d.z?'<h4>Ameba</h4><p>'+d.z+'</p>':'')+(d.w?'<h4>Páginas web</h4><p>'+d.w+'</p>':'');
+  document.getElementById("ov").classList.add("on");
+}
+function closeM(){document.getElementById("ov").classList.remove("on")}
+document.getElementById("hub").onclick=function(){openM("hub")};
+document.getElementById("ov").onclick=function(e){if(e.target.id=="ov")closeM()};
+document.addEventListener("keydown",function(e){if(e.key=="Escape")closeM()});
+document.getElementById("th").onclick=function(){document.body.classList.toggle("dark");this.textContent=document.body.classList.contains("dark")?"Modo Claro":"Modo Oscuro"};
+</script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Árbol de Pertinencia - Proceso Prospectivo Estratégico 2035</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #cbd5e1;
+      --canvas-bg: #f1f5f9;
+      --accent: #2563eb;
+      --accent-glow: rgba(37, 99, 235, 0.2);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-title: #1e293b;
+      
+      --purple-flow: #9333ea;
+      --green-flow: #16a34a;
+      --blue-flow: #2563eb;
+      --amber-flow: #d97706;
+      --overlay-bg: rgba(15, 23, 42, 0.75);
+    }
+
+    body.dark-theme {
+      --bg: #0b0f19;
+      --card-bg: #151d2a;
+      --card-border: #2a364f;
+      --canvas-bg: #111827;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-title: #ffffff;
+
+      --purple-flow: #8b5cf6;
+      --green-flow: #10b981;
+      --blue-flow: #3b82f6;
+      --amber-flow: #f59e0b;
+      --overlay-bg: rgba(11, 15, 25, 0.85);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text); padding: 1.25rem; line-height: 1.5; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+
+    /* CABECERA */
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; background: var(--card-bg); border: 1px solid var(--card-border); padding: 1rem 1.25rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .header-info h1 { font-size: 1.35rem; color: var(--text-title); font-weight: 800; margin-bottom: 0.25rem; }
+    .header-info p { color: var(--text-muted); font-size: 0.85rem; }
+
+    .theme-toggle-btn { background: var(--card-bg); border: 1.5px solid var(--accent); color: var(--text); padding: 0.45rem 0.95rem; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+    .theme-toggle-btn:hover { background: var(--accent); color: #ffffff; }
+
+    /* LIENZO PRINCIPAL DEL ÁRBOL */
+    .bubble-tree-canvas { position: relative; width: 100%; max-width: 1200px; height: 980px; margin: 0 auto; background: var(--canvas-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+
+    .tree-zone-bg { position: absolute; left: 15px; width: 1170px; border-radius: 20px; border: 2px dashed; z-index: 1; }
+    .lvl-label { position: absolute; top: 12px; left: 18px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .bnode { position: absolute; z-index: 10; background: var(--card-bg); border-radius: 22px; padding: 0.85rem 1.1rem; text-align: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: all 0.25s ease; line-height: 1.45; }
+    .bnode:hover { transform: scale(1.025) translateY(-2px); box-shadow: 0 8px 20px var(--accent-glow); }
+
+    /* CONTENEDOR VERDE DE LA VISIÓN 2035 (NIVEL 2 AMPLIADO) */
+    .bnode.central-vision { left: 150px; top: 200px; width: 900px; padding: 1.25rem 2rem; border-radius: 28px; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: 2.5px solid #4ade80; text-align: center; box-shadow: 0 6px 20px rgba(22, 163, 74, 0.28); }
+
+    .bnode.action-bubble { border-radius: 18px; font-size: 0.82rem; text-align: left; padding: 1.15rem; }
+    .bnode.action-bubble ul { list-style-type: disc; padding-left: 1.2rem; margin-top: 0.5rem; color: var(--text-muted); }
+    .bnode.action-bubble li { margin-bottom: 0.5rem; line-height: 1.45; font-weight: 500; }
+
+    /* MODAL INTERACTIVO */
+    .modal-overlay { position: fixed; inset: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 100; padding: 1rem; }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+    .modal-card { background: var(--card-bg); border: 1.5px solid var(--accent); border-radius: 14px; width: 100%; max-width: 750px; max-height: 88vh; overflow-y: auto; padding: 1.75rem; box-shadow: 0 15px 40px rgba(0,0,0,0.22); }
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.85rem; }
+    .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--text-title); margin-top: 0.25rem; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer; }
+
+    .modal-body-section { margin-bottom: 1.1rem; font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+    .modal-body-section h4 { color: var(--accent); font-size: 0.82rem; text-transform: uppercase; margin-bottom: 0.35rem; font-weight: 800; }
+    .metrics-box { background: rgba(37, 99, 235, 0.08); border-left: 3.5px solid var(--accent); padding: 0.85rem; border-radius: 0 6px 6px 0; margin: 0.85rem 0; font-size: 0.85rem; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div class="header-info">
+      <h1>Árbol de Pertinencia Prospectivo</h1>
+      <p>Estructura Jerárquica: Incertidumbres ➔ Visión 2035 ➔ Objetivos ➔ Acciones Concretas</p>
+    </div>
+    <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()">Modo Oscuro</button>
+  </div>
+
+  <div class="bubble-tree-canvas">
+    
+    <!-- ZONAS DE DECOLORACIÓN POR NIVEL -->
+    <div class="tree-zone-bg" style="top: 15px; height: 140px; background: rgba(147, 51, 234, 0.08); border-color: rgba(147, 51, 234, 0.4);">
+      <span class="lvl-label" style="color: #9333ea;">Nivel 1: Incertidumbres Críticas del Entorno</span>
+    </div>
+
+    <div class="tree-zone-bg" style="top: 170px; height: 165px; background: rgba(22, 163, 74, 0.08); border-color: rgba(22, 163, 74, 0.4);">
+      <span class="lvl-label" style="color: #16a34a;">Nivel 2: Visión Prospectiva al 2035 (Escenario Apuesta)</span>
+    </div>
+
+    <div class="tree-zone-bg" style="top: 350px; height: 135px; background: rgba(37, 99, 235, 0.08); border-color: rgba(37, 99, 235, 0.4);">
+      <span class="lvl-label" style="color: #2563eb;">Nivel 3: Objetivos Estratégicos</span>
+    </div>
+
+    <div class="tree-zone-bg" style="top: 500px; height: 450px; background: rgba(217, 119, 6, 0.08); border-color: rgba(217, 119, 6, 0.4);">
+      <span class="lvl-label" style="color: #d97706;">Nivel 4: Acciones Concretas y Medios de Ecodiseño</span>
+    </div>
+
+    <!-- SVG CON LÍNEAS DE CONEXIÓN ALINEADAS -->
+    <svg style="position: absolute; inset: 0; width: 100%; height: 980px; z-index: 2; pointer-events: none;">
+      <!-- NIVEL 1 A NIVEL 2 -->
+      <path stroke="#9333ea" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 160,123 C 160,160 600,160 600,200" />
+      <path stroke="#9333ea" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 450,123 C 450,160 600,160 600,200" />
+      <path stroke="#9333ea" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 750,123 C 750,160 600,160 600,200" />
+      <path stroke="#9333ea" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 1040,123 C 1040,160 600,160 600,200" />
+
+      <!-- NIVEL 2 A NIVEL 3 -->
+      <path stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 600,325 C 600,355 160,355 160,385" />
+      <path stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 600,325 C 600,355 450,355 450,385" />
+      <path stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 600,325 C 600,355 750,355 750,385" />
+      <path stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 600,325 C 600,355 1040,355 1040,385" />
+
+      <!-- NIVEL 3 A NIVEL 4 -->
+      <path stroke="#2563eb" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 160,445 L 160,535" />
+      <path stroke="#2563eb" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 450,445 L 450,535" />
+      <path stroke="#2563eb" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 750,445 L 750,535" />
+      <path stroke="#2563eb" stroke-width="2" fill="none" stroke-dasharray="5 4" d="M 1040,445 L 1040,535" />
+    </svg>
+
+    <!-- NIVEL 1: INCERTIDUMBRES CRÍTICAS -->
+    <div class="bnode" style="border: 2px solid #9333ea; color: #9333ea; left: 30px; top: 48px; width: 260px; height: 75px; font-size: 0.78rem; font-weight: 700;" onclick="openModal('inc1')">
+      Incertidumbre Regulatoria
+      <small style="display:block; font-weight:400; color:var(--text-muted); font-size: 0.68rem; margin-top:0.25rem;">Adopción local del Reglamento UE 2023/1542</small>
+    </div>
+
+    <div class="bnode" style="border: 2px solid #9333ea; color: #9333ea; left: 320px; top: 48px; width: 260px; height: 75px; font-size: 0.78rem; font-weight: 700;" onclick="openModal('inc2')">
+      Incertidumbre Tecnológica
+      <small style="display:block; font-weight:400; color:var(--text-muted); font-size: 0.68rem; margin-top:0.25rem;">Evolución de baterías modulares vs sellado</small>
+    </div>
+
+    <div class="bnode" style="border: 2px solid #9333ea; color: #9333ea; left: 620px; top: 48px; width: 260px; height: 75px; font-size: 0.78rem; font-weight: 700;" onclick="openModal('inc3')">
+      Incertidumbre del Consumidor
+      <small style="display:block; font-weight:400; color:var(--text-muted); font-size: 0.68rem; margin-top:0.25rem;">Preferencia por durabilidad vs miniaturización</small>
+    </div>
+
+    <div class="bnode" style="border: 2px solid #9333ea; color: #9333ea; left: 910px; top: 48px; width: 260px; height: 75px; font-size: 0.78rem; font-weight: 700;" onclick="openModal('inc4')">
+      Incertidumbre Económica
+      <small style="display:block; font-weight:400; color:var(--text-muted); font-size: 0.68rem; margin-top:0.25rem;">Negocio de repuestos vs reemplazo total</small>
+    </div>
+
+    <!-- NIVEL 2: VISIÓN PROSPECTIVA AL 2035 (RECUADRO VERDE AMPLIADO) -->
+    <div class="bnode central-vision" style="left: 150px; top: 200px; width: 900px; padding: 1.25rem 2rem;" onclick="openModal('v2035')">
+      <strong style="font-size: 1.05rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.4rem;">Visión Prospectiva al 2035</strong>
+      <p style="font-size: 0.88rem; font-weight: 500; line-height: 1.55; color: #ffffff;">
+        Para el 2035, el mercado de audio personal (TWS, Over-Ear y Parlantes) migra y convive bajo un modelo industrial sostenible, modular y de alta durabilidad (>5 años de vida útil), eliminando por completo el desecho prematuro por degradación de batería.
+      </p>
+    </div>
+
+    <!-- NIVEL 3: OBJETIVOS ESTRATÉGICOS -->
+    <div class="bnode" style="border: 2px solid #16a34a; color: #16a34a; left: 30px; top: 385px; width: 260px; height: 60px; font-size: 0.85rem; font-weight: 700;" onclick="openModal('obj1')">
+      Gobernanza y Marco Regulatorio Activo
+    </div>
+
+    <div class="bnode" style="border: 2px solid #2563eb; color: #2563eb; left: 320px; top: 385px; width: 260px; height: 60px; font-size: 0.85rem; font-weight: 700;" onclick="openModal('obj2')">
+      Arquitectura Hardware Desmontable e IP54
+    </div>
+
+    <div class="bnode" style="border: 2px solid #9333ea; color: #9333ea; left: 620px; top: 385px; width: 260px; height: 60px; font-size: 0.85rem; font-weight: 700;" onclick="openModal('obj3')">
+      Materiales Circulares y Gestión Térmica
+    </div>
+
+    <div class="bnode" style="border: 2px solid #d97706; color: #d97706; left: 910px; top: 385px; width: 260px; height: 60px; font-size: 0.85rem; font-weight: 700;" onclick="openModal('obj4')">
+      Ecosistema de Repuestos y Servicio Técnico
+    </div>
+
+    <!-- NIVEL 4: ACCIONES CONCRETAS Y MEDIOS DE ECODISEÑO -->
+    <div class="bnode action-bubble" style="border: 1.5px solid #16a34a; left: 30px; top: 535px; width: 260px; height: 390px;" onclick="openModal('obj1')">
+      <strong style="color:#16a34a; font-size: 0.84rem; display: block; margin-bottom: 0.6rem;">Acciones Regulatorias:</strong>
+      <ul>
+        <li>Manuales técnicos y esquemáticos públicos.</li>
+        <li>Cero bloqueo por software (parts-pairing).</li>
+        <li>Sello e Índice de Reparabilidad visible.</li>
+      </ul>
+    </div>
+
+    <div class="bnode action-bubble" style="border: 1.5px solid #2563eb; left: 320px; top: 535px; width: 260px; height: 390px;" onclick="openModal('obj2')">
+      <strong style="color:#2563eb; font-size: 0.84rem; display: block; margin-bottom: 0.6rem;">Acciones de Hardware:</strong>
+      <ul>
+        <li>Sustituir pegamento por tornillos Torx/Phillips.</li>
+        <li>Baterías de celda cambiables en 2 min.</li>
+        <li>Puerto USB-C en tarjeta hija secundaria.</li>
+      </ul>
+    </div>
+
+    <div class="bnode action-bubble" style="border: 1.5px solid #9333ea; left: 620px; top: 535px; width: 260px; height: 390px;" onclick="openModal('obj3')">
+      <strong style="color:#9333ea; font-size: 0.84rem; display: block; margin-bottom: 0.6rem;">Acciones de Software y Materiales:</strong>
+      <ul>
+        <li>Firmware BMS optimizado (1.500 ciclos).</li>
+        <li>Polímeros 100% reciclados postconsumo.</li>
+        <li>Apertura mecánica rápida previa al RAEE.</li>
+      </ul>
+    </div>
+
+    <div class="bnode action-bubble" style="border: 1.5px solid #d97706; left: 910px; top: 535px; width: 260px; height: 390px;" onclick="openModal('obj4')">
+      <strong style="color:#d97706; font-size: 0.84rem; display: block; margin-bottom: 0.6rem;">Acciones de Mercado Local:</strong>
+      <ul>
+        <li>Kits de repuestos económicos (&lt;$10 USD).</li>
+        <li>Insumos oficiales para técnicos de barrio.</li>
+        <li>Programa de retorno de piezas usadas.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- VENTANA MODAL DE DETALLES -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; padding:0.2rem 0.5rem; background:var(--accent); color:#fff; border-radius:4px;" id="m-tag">NIVEL</span>
+          <h2 class="modal-title" id="m-title">Título</h2>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="modal-body-section">
+        <h4>Descripción Técnica y Prospectiva</h4>
+        <p id="m-desc">Detalle...</p>
+      </div>
+
+      <div class="metrics-box">
+        <strong>Métricas e Indicadores Clave:</strong>
+        <p id="m-metrics" style="margin-top:0.25rem;">Métricas...</p>
+      </div>
+
+      <div class="modal-body-section">
+        <h4>Impacto en la Visión 2035</h4>
+        <p id="m-impact">Impacto...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dataModal = {
+      'v2035': {
+        tag: 'Nivel 2: Visión Prospectiva',
+        title: 'Visión Prospectiva al 2035 (Escenario Apuesta)',
+        desc: 'Para el 2035, el mercado de audio personal migra hacia un modelo modular y sostenible donde la vida útil de los audífonos supera los 5 años gracias a baterías intercambiables.',
+        metrics: 'Vida útil > 60 meses. Puntuación iFixit ≥ 8/10 en el 80% de productos del mercado.',
+        impact: 'Define el propósito central alrededor del cual se alinean los objetivos y acciones del proyecto.'
+      },
+      'inc1': {
+        tag: 'Nivel 1: Incertidumbre Regulatoria',
+        title: 'Adopción del Reglamento UE 2023/1542',
+        desc: 'Duda sobre qué tan rápido las leyes europeas de reparabilidad forzarán la adopción de normativas similares en Colombia y América Latina.',
+        metrics: 'Decretos obligatorios para 2027 en Europa.',
+        impact: 'Impulsa las acciones regulatorias locales y el etiquetado obligatorio.'
+      },
+      'obj1': {
+        tag: 'Nivel 3 & 4: Gobernanza',
+        title: 'Gobernanza y Marco Regulatorio Activo',
+        desc: 'Garantiza la disponibilidad de manuales técnicos, prohíbe el bloqueo por software (parts-pairing) y exige etiquetas visibles de reparabilidad.',
+        metrics: 'Índice de reparabilidad visible en empaques físicos y plataformas virtuales.',
+        impact: 'Protege el Derecho a Reparar del usuario final.'
+      },
+      'obj2': {
+        tag: 'Nivel 3 & 4: Hardware',
+        title: 'Arquitectura Hardware Desmontable e IP54',
+        desc: 'Sustituye resinas epóxicas por tornillería Torx/Phillips y juntas mecánicas de silicona para garantizar protección contra salpicaduras sin pegar la carcasa.',
+        metrics: 'Sustitución de batería en menos de 2 minutos.',
+        impact: 'Sustenta la viabilidad técnica del ecodiseño modular.'
+      },
+      'obj3': {
+        tag: 'Nivel 3 & 4: Materiales',
+        title: 'Materiales Circulares y Gestión Térmica',
+        desc: 'Aplica polímeros reciclados postconsumo y firmware optimizado para extender la vida útil de las celdas a 1.500 ciclos de carga.',
+        metrics: 'BMS configurado para conservar el 80% de la capacidad tras 4 años.',
+        impact: 'Sostenibilidad ambiental directa y reducción del RAEE.'
+      },
+      'obj4': {
+        tag: 'Nivel 3 & 4: Mercado Local',
+        title: 'Ecosistema de Repuestos y Servicio Técnico',
+        desc: 'Comercialización de kits de refacciones a precios accesibles (<$10 USD) y suministro oficial de piezas a talleres e ingenieros de barrio.',
+        metrics: 'Costo de repuesto <10% del valor de un producto nuevo.',
+        impact: 'Formaliza el canal de reparación local y reduce la brecha económica para el usuario.'
+      }
+    };
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+      const isDark = document.body.classList.contains('dark-theme');
+      document.getElementById('themeBtn').innerText = isDark ? 'Modo Claro' : 'Modo Oscuro';
+    }
+
+    function openModal(key) {
+      const info = dataModal[key];
+      if (!info) return;
+
+      document.getElementById('m-tag').innerText = info.tag;
+      document.getElementById('m-title').innerText = info.title;
+      document.getElementById('m-desc').innerText = info.desc;
+      document.getElementById('m-metrics').innerText = info.metrics;
+      document.getElementById('m-impact').innerText = info.impact;
+
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>
